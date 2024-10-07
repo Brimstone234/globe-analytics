@@ -3,6 +3,9 @@ import * as XLSX from "xlsx";
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, Cell } from "recharts";
 import globe from "./assets/glove.png";
 import React from 'react';
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
+import GenericPdfDownloader from GenericPdfDownloader;
 import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 import {
   DashboardOutlined,
@@ -10,10 +13,23 @@ import {
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+const GenericPdfDownloader = ({rootElementId , downloadFileName}) => {
 
-import ReactPDF from '@react-pdf/renderer';
+  const downloadPdfDocument = () => {
+      const input = document.getElementById(rootElementId);
+      html2canvas(input)
+          .then((canvas) => {
+              const imgData = canvas.toDataURL('image/png');
+              const pdf = new jsPDF();
+              pdf.addImage(imgData, 'JPEG', 0, 0);
+              pdf.save(`${downloadFileName}.pdf`);
+          })
+  }
 
-ReactPDF.render(<MyDocument />, `${__dirname}/example.pdf`);
+  return <button onClick={downloadPdfDocument}>Download Pdf</button>
+
+}
+export default GenericPdfDownloader;
 
 // Create styles
 const styles = StyleSheet.create({
